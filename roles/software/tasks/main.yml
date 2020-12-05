@@ -36,3 +36,50 @@
     state: latest
   become: yes
 
+- name: Install kazam
+  apt:
+    name:
+      - kazam
+    state: latest
+  become: yes
+
+- name: Check if google-chrome is installed
+  command: dpkg-query -W google-chrome
+  register: google_chrome_check
+  failed_when: google_chrome_check.rc > 1
+  changed_when: google_chrome_check.rc == 1
+
+- name: Download google chrome package
+  get_url:
+    url="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+    dest="/home/{{ ansible_env.USER }}/Downloads/google-chrome.deb"
+  when: google_chrome_check.rc == 1
+
+- name: Install google-chrome
+  apt: deb="/home/{{ ansible_env.USER }}/Downloads/google-chrome.deb"
+  become: true
+  when: google_chrome_check.rc == 1
+
+- name: Install skype
+  snap:
+    name: skype
+    classic: yes
+  become: yes
+
+- name: Install slack with option --classic
+  snap:
+    name: slack
+    classic: yes
+  become: yes
+
+- name: Install atom with option --classic
+  snap:
+    name: atom
+    classic: yes
+  become: yes
+
+- name: not working ok Install flameshot for screenshots
+  snap:
+    name: flameshot
+    classic: yes
+  become: yes
